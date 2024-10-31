@@ -101,22 +101,32 @@ group by to_char(sale_date, 'YYYY-MM')
 --Сортировка по возрастанию даты
 order by selling_month;
 
+
 --Задача 6, пункт 3
+--Создаю временную доп таблицу, в которой соединяю все нужные таблицы
+with tab as (
+	select 
+	concat(c.first_name, ' ', c.last_name) as customer,
+	s.sale_date as sale_date,
+	concat(e.first_name, ' ', e.last_name) as seller,
+	row_number() over (partition by concat(c.first_name, ' ', c.last_name) order by s.sale_date) as row_number,
+	p.name as name, 
+	p.price as price
+	from sales s 
+	left join customers c on s.customer_id = c.customer_id
+	left join employees e on s.sales_person_id = e.employee_id
+	left join products p on s.product_id  = p.product_id
+	order by sale_date
+)
+--На основе таблицы tab достаю нужные значения используя фильтр 
 select 
-concat(c.first_name, ' ', c.last_name) as customer,
-s.sale_date as sale_date,
-concat(e.first_name, ' ', e.last_name) as seller
-from sales s 
---Присоединяю все таблицы
-inner join employees e 
-on e.employee_id = s.sales_person_id
-inner join customers c 
-on c.customer_id = s.customer_id
-inner join products p 
-on p.product_id = s.product_id
---Условие выборки и сортировки
-where p.price = 0
-order by c.customer_id;
+customer,
+sale_date,
+seller
+from tab
+where price = 0 and row_number = 1
+order by customer
+;
 
 
 
