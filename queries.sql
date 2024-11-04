@@ -92,8 +92,8 @@ where age > 40;
 select
 --Привожу дату к нужному виду
 to_char(sale_date, 'YYYY-MM') as selling_month,
---Подсчет покупателей по всем строкам таблицы
-count(distinct sales_person_id) as total_customers,
+--Подсчет покупателей по уникальным customer_id 
+count(distinct customer_id) as total_customers,
 sum(quantity) as income
 from sales
 --Группировка по дате
