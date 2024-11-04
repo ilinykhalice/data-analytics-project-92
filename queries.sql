@@ -93,7 +93,7 @@ select
 --Привожу дату к нужному виду
 to_char(sale_date, 'YYYY-MM') as selling_month,
 --Подсчет покупателей по всем строкам таблицы
-count(*) as total_customers,
+count(distinct sales_person_id) as total_customers,
 sum(quantity) as income
 from sales
 --Группировка по дате
