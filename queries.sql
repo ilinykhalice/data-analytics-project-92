@@ -87,17 +87,19 @@ count(*) as age_count
 from customers c 
 where age > 40;
 
-
 --Задача 6, пункт 2
 select
 --Привожу дату к нужному виду
-to_char(sale_date, 'YYYY-MM') as selling_month,
---Подсчет покупателей по уникальным customer_id 
-count(distinct customer_id) as total_customers,
-sum(quantity) as income
-from sales
+to_char(s.sale_date, 'YYYY-MM') as selling_month,
+--Подсчет покупателей по уникальным строкам с sales таблицы
+count(distinct s.customer_id) as total_customers,
+--Расчет выручки
+floor(sum(p.price * s.quantity)) as income
+from sales as s
+inner join products p 
+on p.product_id = s.product_id
 --Группировка по дате
-group by to_char(sale_date, 'YYYY-MM')
+group by to_char(s.sale_date, 'YYYY-MM')
 --Сортировка по возрастанию даты
 order by selling_month;
 
